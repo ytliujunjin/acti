@@ -6,7 +6,7 @@
 <generatorConfiguration>
 
     <!-- 指定连接数据库的JDBC驱动包所在位置，指定到你本机的完整路径 -->
-    <classPathEntry location="C:\Users\user\.m2\repository\mysql\mysql-connector-java\5.1.34\mysql-connector-java-5.1.34.jar"/>
+    <classPathEntry location="D:/Jars/mysql-connector-java-5.1.30.jar"/>
 
     <!-- 配置table表信息内容体，targetRuntime指定采用MyBatis3的版本 -->
     <context id="tables" targetRuntime="MyBatis3">
@@ -21,7 +21,7 @@
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://127.0.0.1:3306/activiti"
                         userId="root"
-                        password="123456">
+                        password="chendeng1226">
         </jdbcConnection>
 
         <!-- 生成model类，targetPackage指定model类的包名， targetProject指定生成的model放在eclipse的哪个工程下面-->
@@ -41,21 +41,14 @@
         </javaClientGenerator>
 
         <!-- 数据库表名及对应的Java模型类名 -->
-        <table tableName="meeting_detail"
-               domainObjectName="MeetingDetail"
+        <table tableName="act_de_model"
+               domainObjectName="FormData"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
 
-
-        <table tableName="meeting_place"
-               domainObjectName="MeetingPlace"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false"/>
     </context>
+
 </generatorConfiguration>
