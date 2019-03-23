@@ -1,11 +1,15 @@
 package com.cd.acti.controller;
 
+import com.cd.acti.model.FormDataWithBLOBs;
+import com.cd.acti.service.FormDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.*;
+import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
+import org.activiti.engine.repository.Model;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +53,9 @@ public class ProcessDetailController {
     @Autowired
     private FormService formService;
 
+    @Autowired
+    private FormDataService formDataService;
+
     @RequestMapping("/userInfo")
     public String userInfo(HttpServletRequest request) {
         //项目中每创建一个新用户，对应的要创建一个Activiti用户
@@ -71,23 +78,19 @@ public class ProcessDetailController {
     @RequestMapping("/startFormData")
     public String startFormData(HttpServletRequest req, String userId, Integer days, String formId) {
         //启动流程实例，字符串"vacation"是BPMN模型文件里process元素的id
-        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("vacation");
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("leave_process");
         //流程实例启动后，流程会跳转到请假申请节点
         Task vacationApply = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
-        //设置请假申请任务的执行人
-        taskService.setAssignee(vacationApply.getId(), userId);
 
-        //设置流程参数：请假天数和表单ID
-        //流程引擎会根据请假天数days>3判断流程走向
-        //formId是用来将流程数据和表单数据关联起来
-        Map<String, Object> args = new HashMap<>();
-        args.put("days", days);
-        args.put("formId", formId);
+        log.info(vacationApply.toString());
 
-        //完成请假申请任务
-        taskService.complete(vacationApply.getId(), args);
+        TaskFormData taskFormData = formService.getTaskFormData("5016");
+        log.info(taskFormData.getFormKey());
+        log.info(taskFormData.getFormProperties().toString());
+        Model model = repositoryService.getModel("2537");
+        log.info(model.getName());
 
-        return "";
+        return vacationApply.toString();
     }
 
     @RequestMapping("/saveFormData")
@@ -135,68 +138,17 @@ public class ProcessDetailController {
         return "";
     }
 
-    @RequestMapping(value = "/image", method = RequestMethod.GET)
-    public void image(HttpServletResponse response,
-                      @RequestParam String processInstanceId) {
-        try {
-            InputStream is = getDiagram(processInstanceId);
-            if (is == null)
-            {
-                log.error("为空");
-                return;
-            }
-
-            response.setContentType("image/png");
-
-            BufferedImage image = ImageIO.read(is);
-            OutputStream out = response.getOutputStream();
-            ImageIO.write(image, "png", out);
-
-            is.close();
-            out.close();
-        } catch (Exception ex) {
-            log.error("查看流程图失败", ex);
-        }
+    @RequestMapping("/getFormProperties")
+    public String getFormProperties(String formKey) {
+        String formProperties = getFormPropertiesByFormKey(formKey);
+        log.info(formProperties);
+        return formProperties;
     }
 
-    public InputStream getDiagram(String processInstanceId) {
-        /*//获得流程实例
-        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
-                .processInstanceId(processInstanceId).singleResult();
-        String processDefinitionId = StringUtils.EMPTY;
-        if (processInstance == null) {
-            //查询已经结束的流程实例
-            HistoricProcessInstance processInstanceHistory =
-                    historyService.createHistoricProcessInstanceQuery()
-                            .processInstanceId(processInstanceId).singleResult();
-            if (processInstanceHistory == null) {
-                log.error("1为空");
-                return null;
-            } else {
-                processDefinitionId = processInstanceHistory.getProcessDefinitionId();
-            }
-        } else {
-            log.error("2为空");
-            processDefinitionId = processInstance.getProcessDefinitionId();
-        }
-
-        //使用宋体
-        String fontName = "宋体";
-        //获取BPMN模型对象
-        BpmnModel model = repositoryService.getBpmnModel(processDefinitionId);
-        //获取流程实例当前的节点，需要高亮显示
-        List<String> currentActs = Collections.EMPTY_LIST;
-        if (processInstance != null)
-            currentActs = runtimeService.getActiveActivityIds(processInstance.getId());
-
-        return processEngine.getProcessEngineConfiguration()
-                .getProcessDiagramGenerator()
-                .generateDiagram(model, "png", currentActs, new ArrayList<String>(),
-                        fontName, fontName, fontName, null, 1.0);*/
-        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-        InputStream inputStream = processEngine.getRepositoryService()
-                .getProcessModel(processInstanceId);
-        return inputStream;
+    private String getFormPropertiesByFormKey(String formKey) {
+        FormDataWithBLOBs formData = formDataService.findByFormKey(formKey);
+        return formData.getModelEditorJson();
     }
+
 
 }
