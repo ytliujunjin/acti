@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cd.acti.dao.FormDataMapper">
+  <resultMap id="BaseResultMap" type="com.cd.acti.model.FormData">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="model_key" jdbcType="VARCHAR" property="modelKey" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="model_comment" jdbcType="VARCHAR" property="modelComment" />
+    <result column="created" jdbcType="TIMESTAMP" property="created" />
+    <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+    <result column="last_updated" jdbcType="TIMESTAMP" property="lastUpdated" />
+    <result column="last_updated_by" jdbcType="VARCHAR" property="lastUpdatedBy" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="model_type" jdbcType="INTEGER" property="modelType" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cd.acti.model.FormDataWithBLOBs">
+    <result column="model_editor_json" jdbcType="LONGVARCHAR" property="modelEditorJson" />
+    <result column="thumbnail" jdbcType="LONGVARBINARY" property="thumbnail" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, model_key, description, model_comment, created, created_by, last_updated, 
+    last_updated_by, version, model_type
+  </sql>
+  <sql id="Blob_Column_List">
+    model_editor_json, thumbnail
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from act_de_model
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByFormKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from act_de_model
+    where model_key = #{modelKey,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from act_de_model
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cd.acti.model.FormDataWithBLOBs">
+    insert into act_de_model (id, name, model_key, 
+      description, model_comment, created, 
+      created_by, last_updated, last_updated_by, 
+      version, model_type, model_editor_json, 
+      thumbnail)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{modelKey,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{modelComment,jdbcType=VARCHAR}, #{created,jdbcType=TIMESTAMP}, 
+      #{createdBy,jdbcType=VARCHAR}, #{lastUpdated,jdbcType=TIMESTAMP}, #{lastUpdatedBy,jdbcType=VARCHAR}, 
+      #{version,jdbcType=INTEGER}, #{modelType,jdbcType=INTEGER}, #{modelEditorJson,jdbcType=LONGVARCHAR}, 
+      #{thumbnail,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cd.acti.model.FormDataWithBLOBs">
+    insert into act_de_model
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="modelKey != null">
+        model_key,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="modelComment != null">
+        model_comment,
+      </if>
+      <if test="created != null">
+        created,
+      </if>
+      <if test="createdBy != null">
+        created_by,
+      </if>
+      <if test="lastUpdated != null">
+        last_updated,
+      </if>
+      <if test="lastUpdatedBy != null">
+        last_updated_by,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="modelType != null">
+        model_type,
+      </if>
+      <if test="modelEditorJson != null">
+        model_editor_json,
+      </if>
+      <if test="thumbnail != null">
+        thumbnail,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="modelKey != null">
+        #{modelKey,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="modelComment != null">
+        #{modelComment,jdbcType=VARCHAR},
+      </if>
+      <if test="created != null">
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null">
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdated != null">
+        #{lastUpdated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdatedBy != null">
+        #{lastUpdatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="modelType != null">
+        #{modelType,jdbcType=INTEGER},
+      </if>
+      <if test="modelEditorJson != null">
+        #{modelEditorJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="thumbnail != null">
+        #{thumbnail,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cd.acti.model.FormDataWithBLOBs">
+    update act_de_model
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="modelKey != null">
+        model_key = #{modelKey,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="modelComment != null">
+        model_comment = #{modelComment,jdbcType=VARCHAR},
+      </if>
+      <if test="created != null">
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null">
+        created_by = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdated != null">
+        last_updated = #{lastUpdated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdatedBy != null">
+        last_updated_by = #{lastUpdatedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="modelType != null">
+        model_type = #{modelType,jdbcType=INTEGER},
+      </if>
+      <if test="modelEditorJson != null">
+        model_editor_json = #{modelEditorJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="thumbnail != null">
+        thumbnail = #{thumbnail,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cd.acti.model.FormDataWithBLOBs">
+    update act_de_model
+    set name = #{name,jdbcType=VARCHAR},
+      model_key = #{modelKey,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      model_comment = #{modelComment,jdbcType=VARCHAR},
+      created = #{created,jdbcType=TIMESTAMP},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      last_updated = #{lastUpdated,jdbcType=TIMESTAMP},
+      last_updated_by = #{lastUpdatedBy,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      model_type = #{modelType,jdbcType=INTEGER},
+      model_editor_json = #{modelEditorJson,jdbcType=LONGVARCHAR},
+      thumbnail = #{thumbnail,jdbcType=LONGVARBINARY}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cd.acti.model.FormData">
+    update act_de_model
+    set name = #{name,jdbcType=VARCHAR},
+      model_key = #{modelKey,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      model_comment = #{modelComment,jdbcType=VARCHAR},
+      created = #{created,jdbcType=TIMESTAMP},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      last_updated = #{lastUpdated,jdbcType=TIMESTAMP},
+      last_updated_by = #{lastUpdatedBy,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      model_type = #{modelType,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
